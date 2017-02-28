@@ -1,7 +1,9 @@
 Weborf py
 =========
 
-This little scipt works similar to weborf [https://bugs.launchpad.net/weborf].
+Weborf.py is a minimal webserver. This little scipt works similar to the original
+weborf [https://bugs.launchpad.net/weborf]. It based on the SimpleHTTPServer but
+is esear to configure.
 
     Usage: weborf.py [options]
 
