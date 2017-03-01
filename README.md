@@ -17,3 +17,4 @@ ToDo
 
 * add an option to set the basedir. Now the current working is using.
 * make listen ip configurable
+* make it compatible to Mac
