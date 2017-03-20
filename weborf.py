@@ -11,6 +11,7 @@ from fcntl import ioctl
 from struct import pack
 
 import re
+import signal
 
 from os import listdir,popen
 from sys import platform
@@ -28,6 +29,8 @@ class WebOrf:
             interface=WebOrf.get_interface(),
             ip=None
         )
+
+        signal.signal(signal.SIGINT, WebOrf.cleanup)
 
     def run(self):
         # configure the SimpleHTTPServer
@@ -95,31 +98,20 @@ class WebOrf:
 
         my_ip_address=""
 
-        if platform in ["linux2","lunux3"]:
+        # Linux and MacOSX detection
+        if platform in ["linux2","lunux3","darwin"]:
             infile=popen("/sbin/ifconfig "+ifname).read()
             inarray=infile.split("\n")
             for line in inarray:
-                print(line)
-
-                match=re.match(r".*inet addr:(\d+\.\d+\.\d+\.\d+)",line)
+                print(">"+line+"<")
+                match=re.match(r'\s*(inet addr:|inet )(\d+\.\d+\.\d+\.\d+)',line)
                 if match:
-                    return match.group(1)
-            raise "There is no ip for the interface {iface} configured".format(iface=ifname)
+                    print("IP MATCH:")
+                    return match.group(2)
+            raise Exception("There is no ip for the interface {iface} configured".format(iface=ifname))
 
-
-        # MacOSX detection
-        elif platform in ["darwin"]:
-            infile=popen("/sbin/ifconfig "+ifname).read()
-            inarray=infile.split("\n")
-            for line in inarray:
-                print(line)
-
-                match=re.match(r".*inet addr:(\d+\.\d+\.\d+\.\d+)",line)
-                if match:
-                    return match.group(1)
-            raise "There is no ip for the interface {iface} configured".format(iface=ifname)
         else:
-            raise "unsuportet platform"
+            raise Exception("unsuportet platform!")
 
     @classmethod
     # get default interface
@@ -131,13 +123,25 @@ class WebOrf:
                 match=re.match(r"^0\.0\.0\.0 .* (.*)$",line)
                 if match:
                     return match.group(1)
-            raise "No default gateway found"
+            raise Exception("No default gateway found!")
 
+        # MacOSX detection
         elif platform in ["darwin"]:
-            print("MAC OS detected")
+            infile=popen("netstat -rn").read()
+            inarray=infile.split("\n")
+            for line in inarray:
+                match=re.match(r"^default .* (.*)$",line)
+                if match:
+                    return match.group(1)
+            raise Exception("No default gateway found!")
 
         else:
-            raise "unsuportet platform"
+            raise Exception("unsuportet platform!")
+
+    @classmethod
+    def cleanup(cls, signal, frame):
+        print '\nInteruppted by pressing CTRL-C:\nThanks for using me!'
+        exit(0)
 
 # END of WebOrf class
 
