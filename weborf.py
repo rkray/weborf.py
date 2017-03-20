@@ -103,10 +103,8 @@ class WebOrf:
             infile=popen("/sbin/ifconfig "+ifname).read()
             inarray=infile.split("\n")
             for line in inarray:
-                print(">"+line+"<")
                 match=re.match(r'\s*(inet addr:|inet )(\d+\.\d+\.\d+\.\d+)',line)
                 if match:
-                    print("IP MATCH:")
                     return match.group(2)
             raise Exception("There is no ip for the interface {iface} configured".format(iface=ifname))
 
