@@ -1,9 +1,13 @@
 Weborf py
 =========
 
-Weborf.py is a minimal webserver. This little script works similar to the original
-weborf [https://bugs.launchpad.net/weborf]. It based on the SimpleHTTPServer but
-is easier to configure.
+Weborf.py is a minimal webserver. This little script is inspired by the original
+weborf [https://ltworf.github.io/weborf/] but doesn't implement most of its
+features.
+
+It is also abandoned.
+
+It based on the SimpleHTTPServer but is easier to configure.
 
     Usage: weborf.py [options]
 
